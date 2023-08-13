@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>在线yaml转properties-在线properties转yaml</title>
+
+  <meta name="keywords"
+    content="online properties to yaml converter,yaml to properties,yaml转properties,properties to yaml,properties转yaml">
+  <meta name="description" content="online properties to yaml converter,在线yaml转properties工具">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="css/layui.css" rel="stylesheet">
+  <script src="js/layui.js"></script>
+  <script src="js/convert.js"></script>
+  <script src="js/clipboard.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript"
+    charset="utf-8"></script>
+</head>
+
+<body>
+  <ul class="layui-nav">
+    <li class="layui-nav-item layui-this"><a href="">首页</a></li>
+    <li class="layui-nav-item">
+      <a href="http://allofrandom.cn">随机数</a>
+    </li>
+  </ul>
+
+
+  <div class="layui-bg-gray" style="padding: 16px;">
+    <div class="layui-row layui-col-space16">
+      <div class="layui-col-md5" style="min-height: 600px">
+        <div><b>Properties:</b></div>
+        <div class="layui-code-tools">
+          <i class="layui-icon layui-icon-file-b" data-type="copy" id="copyText"></i>
+        </div>
+        <div class="layui-form">
+          <hr class="ws-space-16">
+          <div id="propertiesForm" style="width:500px;height:500px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-col-md2" style="line-height:300px;">
+        <div class="layui-btn-container" style="text-align:center; margin:auto">
+          <button type="button" class="layui-btn" onclick="convertToYAML()">to-yaml
+            <i class="layui-icon layui-icon-right"></i>
+          </button>
+          <button type="button" class="layui-btn" onclick="convertToProperties()">
+            <i class="layui-icon layui-icon-left"></i> to-properties</button>
+        </div>
+        <!-- <div class="layui-btn-container" style="margin-top: 10px;">
+      <button type="button" class="layui-btn" onclick="convertToProperties()" >to-properties</button>
+    </div> -->
+      </div>
+
+      <div class="layui-col-md5" style="min-height: 600px">
+        <div> <b>yaml:</b></div>
+        <div class="layui-code-tools">
+          <i class="layui-icon layui-icon-file-b" data-type="copy" id="copyYaml"></i>
+        </div>
+        <div class="layui-form">
+          <hr class="ws-space-16">
+          <div id="yamlForm" style="width:500px;height:500px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="row">
+        <div class="layui-col-md12" style="text-align: center;">
+          <div class="fixed"><a target="_blank" href=""></a>
+            <br>
+            Copyright ©2023, pugongying, All Rights Reserved
+            <br>
+            E-Mail:<code></code>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      var propertiesEdit = ace.edit("propertiesForm");
+      new ClipboardJS('#copyText', {
+        text: function (trigger) {
+          return propertiesEdit.getValue();
+        }
+      }).on('success', function (e) {
+        layer.msg("copy");
+        e.clearSelection();
+      }).on('error', function (e) {
+        layer.msg('Error!');
+      });
+
+      var yamlEdit = ace.edit("yamlForm");
+      new ClipboardJS('#copyYaml', {
+        text: function (trigger) {
+          return yamlEdit.getValue();
+        }
+      }).on('success', function (e) {
+        layer.msg("copy");
+        e.clearSelection();
+      }).on('error', function (e) {
+        layer.msg('Error!');
+      });
+      yamlEdit.$blockScrolling = Infinity;
+      yamlEdit.renderer.setShowGutter(false);
+      propertiesEdit.$blockScrolling = Infinity;
+      propertiesEdit.renderer.setShowGutter(false);
+    </script>
+
+</body>
+
+</html>
