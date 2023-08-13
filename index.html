@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>在线yaml转properties-在线properties转yaml</title>
-
+  <title>在线yaml转properties-properties转yaml</title>
+  <link rel="shortcut icon" href="/favicon.ico">
   <meta name="keywords"
     content="online properties to yaml converter,yaml to properties,yaml转properties,properties to yaml,properties转yaml">
-  <meta name="description" content="online properties to yaml converter,在线yaml转properties工具">
+  <meta name="description" content="online properties to yaml converter,yaml to properties,yaml转properties,properties to yaml,properties转yaml">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="css/layui.css" rel="stylesheet">
@@ -25,10 +25,11 @@
   <ul class="layui-nav">
     <li class="layui-nav-item layui-this"><a href="">首页</a></li>
     <li class="layui-nav-item">
-      <a href="http://allofrandom.cn">随机数</a>
+      <a href="http://allofrandom.cn">随机密码</a>
     </li>
   </ul>
 
+  <h2 class="title">yaml to properties & properties to yaml  </h2>
 
   <div class="layui-bg-gray" style="padding: 16px;">
     <div class="layui-row layui-col-space16">
@@ -75,9 +76,9 @@
         <div class="layui-col-md12" style="text-align: center;">
           <div class="fixed"><a target="_blank" href=""></a>
             <br>
-            Copyright ©2023, pugongying, All Rights Reserved
+            Copyright ©2023, yaml2properties, All Rights Reserved
             <br>
-            E-Mail:<code></code>
+           <code></code>
           </div>
 
         </div>
@@ -109,9 +110,17 @@
         layer.msg('Error!');
       });
       yamlEdit.$blockScrolling = Infinity;
-      yamlEdit.renderer.setShowGutter(false);
       propertiesEdit.$blockScrolling = Infinity;
-      propertiesEdit.renderer.setShowGutter(false);
+      yamlEdit.setTheme("ace/theme/clouds");
+      yamlEdit.setFontSize(16);
+      yamlEdit.setReadOnly(false);
+      yamlEdit.setOption("wrap", "free")
+      yamlEdit.setShowPrintMargin(false);
+      propertiesEdit.setTheme("ace/theme/clouds");
+      propertiesEdit.setFontSize(16);
+      propertiesEdit.setReadOnly(false);
+      propertiesEdit.setOption("wrap", "free")
+      propertiesEdit.setShowPrintMargin(false);
     </script>
 
 </body>

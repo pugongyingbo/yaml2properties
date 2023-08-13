@@ -1,11 +1,9 @@
 function convertToProperties() {
     var yamlInput = yamlEdit.getValue();
     console.log( yamlInput );
-    // 将YAML转换为JSON对象
+    
     var jsonObj = jsyaml.load(yamlInput);
-    //const data = yaml.safeLoad(yamlInput);
-    //var propertiesStr = properties.stringify(jsonObj, { unicode: true });
-    // 转换JSON对象为Properties字符串
+   
     var propertiesStr = convertJsonToProperties(jsonObj);
     console.log( propertiesStr );
     propertiesEdit.setValue(propertiesStr);
@@ -14,9 +12,9 @@ function convertToProperties() {
 function convertToYAML() {
 
     var propertiesInput = propertiesEdit.getValue();
-    // 解析Properties字符串为JSON对象
+    
     var jsonObj = parsePropertiesToJson(propertiesInput); 
-    // 将JSON对象转换为YAML字符串
+    
     var yamlStr = jsyaml.dump(jsonObj);
     console.log( yamlStr );
     yamlEdit.setValue(yamlStr);
@@ -25,7 +23,7 @@ function convertToYAML() {
 function convertJsonToProperties(jsonObj) {
     var properties = "";
     var prefix = "";
-    // 递归处理JSON对象
+    
     function traverse(obj, currentKey) {
         for (var key in obj) {
             var value = obj[key];
@@ -34,12 +32,11 @@ function convertJsonToProperties(jsonObj) {
                 value.forEach(function (item, index) {
                   traverse(item, currentKey ? currentKey + "." + key + "[" + index + "]" : key + "[" + index + "]");
                 });
-            // 处理嵌套对象的情况
+            
             } else if(typeof value === "object") {
                 traverse(value, currentKey ? currentKey + "." + key : key);
             } else {
-                // 拼接Properties字符串
-                //properties += (currentKey ? currentKey + "." + key : key) + "=" + value + "\n";
+               
                 properties += (prefix ? prefix + "." : "") + (currentKey ? currentKey + "." + key : key) + "=" + value + "\n";
 
             }
@@ -58,7 +55,7 @@ function parsePropertiesToJson(propertiesStr) {
     lines.forEach(function(line) {
         line = line.trim();
         
-        // 忽略空行和注释行
+        
         if (line === "" || line.startsWith("#")) {
             return;
         }
@@ -69,12 +66,12 @@ function parsePropertiesToJson(propertiesStr) {
             var key = line.substring(0, equalsIndex).trim();
             var value = line.substring(equalsIndex + 1).trim();
             
-            // 处理嵌套属性的情况
+           
             var nestedKeys = key.split(".");
             var currentObj = jsonObj;
             
             nestedKeys.forEach(function(nestedKey, index) {
-                // 处理数组的情况
+                
               if (/\[\d+\]$/.test(nestedKey)) {
                 var arrKey = nestedKey.substring(0, nestedKey.indexOf("["));
                 var arrIndex = nestedKey.substring(nestedKey.indexOf("[") + 1, nestedKey.indexOf("]"));
@@ -108,10 +105,9 @@ function parsePropertiesToJson(propertiesStr) {
 }
 
 function formatValue(value) {
-    // 判断是否为数字类型，并不添加单引号
+ 
     if (!isNaN(Number(value))) {
       return Number(value);
     }
-    // 其他情况保持原样
     return value;
   }
