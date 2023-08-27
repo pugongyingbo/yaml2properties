@@ -24,6 +24,7 @@
 
 <body>
   <ul class="layui-nav">
+    <li class="layui-nav-item" ><a href="#"> 工具网站 </a>  </li>
     <li class="layui-nav-item layui-this"><a href="">首页</a></li>
     <li class="layui-nav-item">
       <a href="http://allofrandom.cn">随机密码</a>
@@ -34,24 +35,24 @@
 
   <div class="layui-bg-gray" style="padding: 16px;">
     <div class="layui-row layui-col-space16">
-      <div class="layui-col-md5" style="min-height: 600px">
+      <div class="layui-col-xs12 layui-col-md5" style="min-height: 650px">
         <div><b>Properties:</b></div>
         <div class="layui-code-tools">
           <i class="layui-icon layui-icon-file-b" data-type="copy" id="copyText"></i>
         </div>
         <div class="layui-form">
           <hr class="ws-space-16">
-          <div id="propertiesForm" style="width:500px;height:500px;">
+          <div id="propertiesForm" style="height:650px;">
           </div>
         </div>
       </div>
 
-      <div class="layui-col-md2" style="line-height:300px;">
+      <div class="layui-col-xs12 layui-col-md2" style="line-height:300px;">
         <div class="layui-btn-container" style="text-align:center; margin:auto">
-          <button type="button" class="layui-btn" onclick="convertToYAML()">to-yaml
+          <button type="button" class="layui-btn layui-btn-fluid" onclick="convertToYAML()">to-yaml
             <i class="layui-icon layui-icon-right"></i>
           </button>
-          <button type="button" class="layui-btn" onclick="convertToProperties()">
+          <button type="button" class="layui-btn layui-btn-fluid" onclick="convertToProperties()">
             <i class="layui-icon layui-icon-left"></i> to-properties</button>
         </div>
         <!-- <div class="layui-btn-container" style="margin-top: 10px;">
@@ -59,14 +60,14 @@
     </div> -->
       </div>
 
-      <div class="layui-col-md5" style="min-height: 600px">
+      <div class="layui-col-xs12 layui-col-md5" style="min-height: 650px">
         <div> <b>yaml:</b></div>
         <div class="layui-code-tools">
           <i class="layui-icon layui-icon-file-b" data-type="copy" id="copyYaml"></i>
         </div>
         <div class="layui-form">
           <hr class="ws-space-16">
-          <div id="yamlForm" style="width:500px;height:500px;">
+          <div id="yamlForm" style="height:650px;">
           </div>
         </div>
       </div>
@@ -116,12 +117,21 @@
       yamlEdit.setFontSize(16);
       yamlEdit.setReadOnly(false);
       yamlEdit.setOption("wrap", "free")
-      yamlEdit.setShowPrintMargin(false);
+     
+      yamlEdit.setOptions({
+        showPrintMargin: false ,// 清除竖线
+        highlightActiveLine: false
+      });
+
       propertiesEdit.setTheme("ace/theme/clouds");
       propertiesEdit.setFontSize(16);
       propertiesEdit.setReadOnly(false);
       propertiesEdit.setOption("wrap", "free")
-      propertiesEdit.setShowPrintMargin(false);
+      
+      propertiesEdit.setOptions({
+        showPrintMargin: false, // 清除竖线
+        highlightActiveLine: false
+      });
     </script>
 
 </body>
