@@ -14,78 +14,205 @@
   crossorigin="anonymous"></script>
   <link href="css/layui.css" rel="stylesheet">
   <script src="js/layui.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Keep other essential scripts -->
   <script src="js/convert.js"></script>
   <script src="js/clipboard.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript"
-    charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js"></script>
+  <style>
+    .tooltip {
+      position: relative;
+    }
+    .tooltip:before {
+      content: attr(data-tip);
+      position: absolute;
+      top: -2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.25rem 0.5rem;
+      background: #374151;
+      color: white;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 50;
+    }
+    .tooltip:hover:before {
+      opacity: 1;
+    }
+  </style>
 </head>
 
-<body>
-  <ul class="layui-nav">
-    <li class="layui-nav-item" ><a href="#"> 工具网站 </a>  </li>
-    <li class="layui-nav-item layui-this"><a href="">首页</a></li>
-  </ul>
+<body class="bg-gray-50 p-4 md:p-6">
+  <!-- Navigation -->
+  <!-- <nav class="bg-white shadow-lg rounded-lg mb-6">
+    <ul class="flex p-4">
+      <li><a href="" class="text-blue-600">HOME</a></li>
+    </ul>
+  </nav> -->
 
-  <h2 class="title">yaml to properties & properties to yaml  </h2>
+  <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">YAML to Properties & Properties to YAML</h2>
 
-  <div class="layui-bg-gray" style="padding: 16px;">
-    <div class="layui-row layui-col-space16">
-      <div class="layui-col-xs12 layui-col-md5" style="min-height: 650px">
-        <div><b>Properties:</b></div>
-        <div class="layui-code-tools">
-          <i class="layui-icon layui-icon-file-b" data-type="copy" id="copyText"></i>
+  <!-- 添加使用说明区域 -->
+  <div class="bg-gray-100 p-6 rounded-lg mb-8">
+    <details class="group">
+      <summary class="cursor-pointer flex items-center gap-2 text-lg font-semibold text-gray-700 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        使用示例（点击展开/收起）
+      </summary>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <!-- Properties 示例 -->
+        <div class="bg-white p-4 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">Properties 格式示例:</h3>
+          <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+# 基础配置
+server.port=8080
+spring.application.name=demo
+
+# 嵌套属性
+spring.datasource.url=jdbc:mysql://localhost:3306/db
+spring.datasource.username=root
+
+# 数组示例
+list[1]=item1
+list[2]=item2
+
+# 对象数组
+users[1].name=张三
+users[1].age=18
+users[2].name=李四
+users[2].age=20</pre>
         </div>
-        <div class="layui-form">
-          <hr class="ws-space-16">
-          <div id="propertiesForm" style="height:650px;">
+        
+        <!-- YAML 示例 -->
+        <div class="bg-white p-4 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">YAML 格式示例:</h3>
+          <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+# 基础配置
+server:
+  port: 8080
+spring:
+  application:
+    name: demo
+  datasource:
+    url: jdbc:mysql://localhost:3306/db
+    username: root
+
+# 数组示例
+list:
+  - item1
+  - item2
+
+# 对象数组
+users:
+  - name: 张三
+    age: 18
+  - name: 李四
+    age: 20</pre>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- 原有的转换区域 -->
+  <div class="bg-white p-6 rounded-lg shadow-lg">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <!-- Properties Editor -->
+      <div class="md:col-span-5">
+        <div class="relative">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Properties:</h3>
+            <div class="flex gap-2">
+              <button onclick="formatProperties()" class="text-gray-500 hover:text-blue-600 tooltip" data-tip="格式化">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+              </button>
+              <button onclick="clearProperties()" class="text-gray-500 hover:text-red-600 tooltip" data-tip="清空">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+              <button onclick="loadPropertiesExample()" class="text-gray-500 hover:text-green-600 tooltip" data-tip="加载示例">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+              <button id="copyText" class="text-gray-500 hover:text-blue-600 tooltip" data-tip="复制">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
+            </div>
           </div>
+          <div id="propertiesForm" class="h-[600px] border border-gray-200 rounded-lg"></div>
         </div>
       </div>
 
-      <div class="layui-col-xs12 layui-col-md2" style="line-height:300px;">
-        <div class="layui-btn-container" style="text-align:center; margin:auto">
-          <button type="button" class="layui-btn layui-btn-fluid" onclick="convertToYAML()">to-yaml
-            <i class="layui-icon layui-icon-right"></i>
-          </button>
-          <button type="button" class="layui-btn layui-btn-fluid" onclick="convertToProperties()">
-            <i class="layui-icon layui-icon-left"></i> to-properties</button>
-        </div>
-        <!-- <div class="layui-btn-container" style="margin-top: 10px;">
-      <button type="button" class="layui-btn" onclick="convertToProperties()" >to-properties</button>
-    </div> -->
+      <!-- Convert Buttons -->
+      <div class="md:col-span-2 flex md:flex-col justify-center gap-4 my-4 md:my-0">
+        <button onclick="convertToYAML()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+          to-yaml
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        <button onclick="convertToProperties()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          to-properties
+        </button>
       </div>
 
-      <div class="layui-col-xs12 layui-col-md5" style="min-height: 650px">
-        <div> <b>yaml:</b></div>
-        <div class="layui-code-tools">
-          <i class="layui-icon layui-icon-file-b" data-type="copy" id="copyYaml"></i>
-        </div>
-        <div class="layui-form">
-          <hr class="ws-space-16">
-          <div id="yamlForm" style="height:650px;">
+      <!-- YAML Editor -->
+      <div class="md:col-span-5">
+        <div class="relative">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">YAML:</h3>
+            <div class="flex gap-2">
+              <button onclick="formatYaml()" class="text-gray-500 hover:text-blue-600 tooltip" data-tip="格式化">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+              </button>
+              <button onclick="clearYaml()" class="text-gray-500 hover:text-red-600 tooltip" data-tip="清空">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+              <button onclick="loadYamlExample()" class="text-gray-500 hover:text-green-600 tooltip" data-tip="加载示例">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+              <button id="copyYaml" class="text-gray-500 hover:text-blue-600 tooltip" data-tip="复制">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
+            </div>
           </div>
+          <div id="yamlForm" class="h-[600px] border border-gray-200 rounded-lg"></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <footer>
-      <div class="row">
-        <div class="layui-col-md12" style="text-align: center;">
-          <div class="fixed"><a target="_blank" href=""></a>
-            <br>
-            Copyright ©2023, yamlconvert.com, All Rights Reserved
-            <br>
-           <code></code>
-          </div>
+  <footer class="mt-12 text-center text-gray-600 border-t border-gray-200 pt-6">
+    <p>Copyright ©2025, yamlconvert.com, All Rights Reserved</p>
+  </footer>
 
-        </div>
-      </div>
-    </footer>
-
-    <script>
-      var propertiesEdit = ace.edit("propertiesForm");
+  <!-- Keep the original script section -->
+  <script>
+    var propertiesEdit = ace.edit("propertiesForm");
       new ClipboardJS('#copyText', {
         text: function (trigger) {
           return propertiesEdit.getValue();
